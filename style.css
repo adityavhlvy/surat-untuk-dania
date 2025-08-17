@@ -1,0 +1,167 @@
+/* Pengaturan Dasar dan Font */
+:root {
+    --bg-color: #fcfaf5;
+    --text-color: #5c554a;
+    --heading-color: #3d352a;
+    --accent-color: #a88b60;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Lora', serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.9;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Mencegah scroll horizontal yang tidak diinginkan */
+    overflow-x: hidden; 
+}
+
+/* Halaman Pembuka */
+#welcome-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    cursor: pointer;
+    transition: opacity 1s ease-out, visibility 1s ease-out;
+}
+#welcome-screen.hidden { opacity: 0; visibility: hidden; }
+.welcome-text { text-align: center; color: var(--heading-color); animation: fadeIn 2s ease-in; }
+.welcome-text h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; }
+.welcome-text p { font-style: italic; margin-top: 0.5rem; font-size: 1rem; opacity: 0.7; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Tata Letak Kontainer Utama */
+.container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Kontainer untuk semua halaman surat */
+.letter-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* Gaya Halaman Surat Individual */
+.letter-page {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
+.letter-page.active {
+    opacity: 1;
+    visibility: visible;
+    position: static;
+}
+
+/* Header/Judul di halaman pertama */
+.hero { text-align: center; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; color: var(--heading-color); margin-bottom: 1rem; }
+.separator { font-size: 2.5rem; color: var(--accent-color); line-height: 1; font-family: serif; }
+
+/* Gaya Teks Surat */
+.letter-page p { margin-bottom: 1.5rem; text-align: justify; }
+.drop-cap { float: left; font-family: 'Playfair Display', serif; font-size: 4.5rem; line-height: 0.8; padding-right: 12px; padding-top: 8px; color: var(--heading-color); }
+
+/* Gaya Tanda Tangan */
+.signature { margin-top: 2rem; text-align: right; font-style: italic; }
+.signature .name { font-style: normal; font-weight: bold; margin-top: 2rem; }
+
+/* Gaya Interaktif */
+.interactive-word { color: var(--accent-color); border-bottom: 1px dotted rgba(168, 139, 96, 0.5); cursor: help; position: relative; display: inline-block; }
+.interactive-word::after { content: attr(data-tooltip); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background-color: var(--heading-color); color: var(--bg-color); padding: 8px 12px; border-radius: 6px; font-size: 14px; line-height: 1.4; text-align: center; font-style: italic; width: 220px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 10; }
+.interactive-word:hover::after { opacity: 1; visibility: visible; }
+
+/* Navigasi Halaman */
+.page-nav {
+    text-align: center;
+    padding: 2rem 0;
+    opacity: 0; /* Awalnya tersembunyi */
+    visibility: hidden;
+    transition: opacity 1s ease-out 1s, visibility 1s ease-out 1s; /* Muncul setelah surat tampil */
+}
+.page-nav.visible { opacity: 1; visibility: visible; }
+
+.page-nav button {
+    background: none;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: 0 1rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+.page-nav button:hover { background-color: var(--accent-color); color: var(--bg-color); }
+.page-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+#page-indicator {
+    font-style: italic;
+    color: var(--text-color);
+    display: inline-block;
+    width: 50px;
+}
+
+/* Widget Musik (tidak ada perubahan signifikan) */
+#music-widget {
+    position: fixed;
+    bottom: 15px;
+    left: 15px;
+    width: 280px;
+    height: 70px;
+    background-color: rgba(252, 250, 245, 0.9);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(168, 139, 96, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, visibility 0.8s ease-out, transform 0.8s ease-out;
+}
+#music-widget.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.album-art { width: 50px; height: 50px; border-radius: 6px; margin-right: 12px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+.song-info { flex-grow: 1; }
+.song-title { font-weight: bold; font-size: 16px; color: var(--heading-color); }
+.artist-name { font-size: 14px; color: var(--text-color); }
+#play-pause-btn { width: 40px; height: 40px; background-color: var(--accent-color); color: var(--bg-color); border: none; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: transform 0.2s ease; }
+#play-pause-btn:hover { transform: scale(1.1); }
+
+/* Penyesuaian untuk Mobile */
+@media (max-width: 600px) {
+    body { font-size: 16px; }
+    .container { padding: 0 1rem; }
+    .hero h1 { font-size: 2.5rem; }
+    .welcome-text h2 { font-size: 2rem; }
+    .drop-cap { font-size: 4rem; }
+    #music-widget { width: calc(100% - 30px); }
+    .interactive-word::after { width: 180px; font-size: 13px; }
+    .page-nav button { width: 45px; height: 45px; font-size: 1.2rem; }
+}
