@@ -3,30 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Untuk Dania</title>
+    <meta name="description" content="Surat delapan halaman untuk Dania, tentang hujan, perjalanan, dan rasa pulang.">
+    <meta name="theme-color" content="#fbf8f2">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%8C%3C/text%3E%3C/svg%3E">
+    <title>Surat untuk Dania</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-    <div id="welcome-screen">
+
+    <div class="reading-progress" aria-hidden="true">
+        <span id="reading-progress-bar"></span>
+    </div>
+
+    <a class="back-link" href="../">
+        <span aria-hidden="true">←</span>
+        Untuk Dania
+    </a>
+
+    <div id="welcome-screen" role="button" tabindex="0" aria-label="Mulai membaca surat">
         <div class="welcome-text">
             <h2>Sebuah Cerita Dimulai...</h2>
             <p>(Sentuh di mana saja untuk melanjutkan)</p>
         </div>
     </div>
-    
-    <audio id="background-music" src="/music.mp3" loop></audio>
+
+    <audio id="background-music" src="/music.mp3" loop preload="metadata"></audio>
 
     <main class="container">
         <div class="letter-container">
             <section class="letter-page active" data-page="0">
                 <header class="hero">
                     <h1>Untuk Dania</h1>
-                    <div class="separator">⚜</div>
+                    <div class="separator" aria-hidden="true">⚜</div>
                 </header>
             </section>
 
@@ -44,12 +55,12 @@
 
             <section class="letter-page" data-page="3">
                 <p><span class="drop-cap">L</span>alu, persimpangan itu tiba di sebuah tempat yang tak terduga. Bukan di tengah alam sunyi, melainkan di sebuah ruangan yang penuh gema, di antara riuh percakapan tentang masa depan. Di antara sekian banyak energi yang beredar, ada satu yang memancar paling terang. Sebuah pusat orbit yang menarik atensi tanpa perlu meminta.</p>
-                <p>Di sanalah sebuah suara terdengar, melantunkan namanya sendiri dengan nada yang begitu yakin, seolah menegaskan sebuah eksistensi tunggal di tengah keramaian. Sebuah deklarasi yang begitu percaya diri, hingga nyaris mengusik ketenangan yang selama ini kujaga. Kalimat itu kuarsipkan dalam benak, kuberi label sebagai sebuah <span class="interactive-word" data-tooltip="Jujur, saat itu aku pikir kamu sedikit berlebihan. Ternyata, anomali inilah yang membuatku jadi lebih berwarna.">anomali</span> yang memesona.</p>
+                <p>Di sanalah sebuah suara terdengar, melantunkan namanya sendiri dengan nada yang begitu yakin, seolah menegaskan sebuah eksistensi tunggal di tengah keramaian. Sebuah deklarasi yang begitu percaya diri, hingga nyaris mengusik ketenangan yang selama ini kujaga. Kalimat itu kuarsipkan dalam benak, kuberi label sebagai sebuah <span class="interactive-word" data-tooltip="Jujur, saat itu aku pikir kamu sedikit berlebihan. Ternyata, anomali inilah yang membuatku jadi lebih berwarna.">anomali</span>.</p>
                 <p>Namun, algoritma kehidupan punya cara kerja yang lucu. Variabel yang tadinya kuanggap sebagai anomali, justru menjadi pemicu sebuah algoritma baru. Sebuah sinyal tak terduga hadir di duniaku yang digital, sebuah ajakan impulsif yang mematahkan semua prasangka. Dan tanpa kusadari, aku telah melangkah keluar dari jalur terprogram, mengikuti sebuah kemungkinan yang terasa begitu baru dan nyata.</p>
             </section>
 
             <section class="letter-page" data-page="4">
-                <p><span class="drop-cap">S</span>kenario pertama kita adalah sebuah naskah yang tak berjalan sesuai rencana. Sebuah pertunjukan yang telah usai sebelum tirainya sempat kita saksikan, menyisakan canggung dan jeda yang panjang. Di sanalah keindahan sebuah <span class="interactive-word" data-tooltip="Momen nasi bebek. Rencana yang gagal total tapi jadi malam pertama yang paling kuingat.">improvisasi</span> lahir. Daripada membiarkan malam larut dalam kecewa, langkah kita terbimbing ke sebuah kedai tenda sederhana, di bawah naungan langit malam.</p>
+                <p><span class="drop-cap">S</span>kenario pertama kita adalah sebuah naskah yang tak berjalan sesuai rencana. Sebuah pertunjukan yang telah usai sebelum tirainya sempat kita saksikan, menyisakan canggung dan jeda yang panjang. Di sanalah keindahan sebuah <span class="interactive-word" data-tooltip="Momen nasi bebek. Rencana yang gagal total tapi jadi malam pertama yang paling kuingat.">improvisasi</span> lahir. Daripada membiarkan malam larut dalam kecewa, langkah kita terbimbing pada sebuah percakapan yang jujur.</p>
                 <p>Momen itu akan selalu memiliki warnanya sendiri. Sepiring hidangan hangat yang kunikmati seorang diri menjadi saksi bisu, sementara engkau hanya menemani dengan kehadiranmu. Tak ada kemewahan, tak ada kesan yang dipaksakan. Yang ada hanyalah kejujuran. Malam itu, pelajaran terbesarnya bukanlah tentang perut yang terisi, melainkan tentang sebuah ruang kosong di antara kita yang mulai terisi oleh percakapan.</p>
                 <p>Di sanalah aku mulai mengerti. Duniaku yang tersusun atas logika dan kepastian bertemu dengan duniamu yang penuh dengan unsur dan kemungkinan tak terbatas. Pertemuan kita adalah sebuah eksperimen hening. Dan malam itu, di antara aroma masakan dan riuh jalanan, sebuah <span class="interactive-word" data-tooltip="Ilmu Komputer + Kimia = ???.">senyawa baru</span> mulai terbentuk, sebuah reaksi kimia yang keindahannya tidak tertulis dalam buku panduan manapun.</p>
             </section>
@@ -59,13 +70,13 @@
                 <p>Rasa "pulang" ini adalah jawaban dari misteri yang tersimpan di awal cerita. Ia adalah inti dari semua rasa yang pernah ada. Ia bersemayam dalam kepedulian sunyi, dalam keresahan yang tak perlu diutarakan, dan dalam kerelaan untuk berjalan lebih lambat saat langkah yang lain terasa berat. Perasaan ini mengubah segalanya; bukan lagi tentang "jalanku" atau "jalanmu", melainkan tentang "jalan kita".</p>
                 <p>Dan di sinilah aku memberanikan diri untuk mengakuinya. Rasa pulang saat menemukan tatapanmu di tengah keramaian, rasa aman saat berbagi hening denganmu, rasa utuh saat berbagi hidangan hangat di tengah riuh jalanan, rasa itu adalah cinta. Sebuah cinta yang tidak membutakan, melainkan yang justru membuat pandangan menjadi lebih jernih. Cinta yang bukan menjadi tujuan akhir, melainkan menjadi kompas terbaik untuk melanjutkan perjalanan ini.</p>
             </section>
-            
+
             <section class="letter-page" data-page="6">
                 <p><span class="drop-cap">H</span>ari ini, engkau tiba di sebuah penanda baru dalam perjalanan hidupmu. Sebuah titik awal untuk memulai satu putaran lagi, dengan cakrawala baru yang membentang di depan mata. Tak ada yang tahu pasti seperti apa lanskap yang akan dihadapi. Mungkin akan ada lebih banyak lembah yang menenangkan, atau mungkin beberapa puncak yang lebih tinggi untuk kita daki bersama.</p>
                 <p>Maka, ini bukanlah sekadar ucapan selamat. Ini adalah sebuah doa yang kubisikkan pada angin. Semoga di babak baru perjalananmu ini, langkahmu selalu ringan dan cahayamu terus memancar, seterang saat pertama kali aku melihatnya. Semoga matamu selalu jeli menemukan keindahan pada hal-hal yang tersembunyi. Dan semoga hatimu selalu menjadi ruang yang lapang untuk terus bertumbuh.</p>
                 <p>Untuk semua jalan yang akan terbentang di depan, aku tidak menjanjikan langit akan selalu biru. Tapi aku menjanjikan kehadiranku, untuk melangkah di sisimu. Menjadi kawan berbagi peta, menjadi rekan yang membawakan lentera, dan menjadi orang pertama yang menggenggam tanganmu saat jalanan mulai terasa sirna.</p>
             </section>
-            
+
             <section class="letter-page" data-page="7">
                 <footer class="signature">
                     <p>Selamat memulai perjalanan barumu, Dania. <span class="interactive-word" data-tooltip="Dan aku tidak pernah ragu soal itu. Selamat ulang tahun sekali lagi, Dania.">Satu-satunya.</span></p>
@@ -74,25 +85,30 @@
                 </footer>
             </section>
         </div>
-        
-        <nav class="page-nav">
-            <button id="prev-page" title="Halaman Sebelumnya">←</button>
-            <span id="page-indicator"></span>
-            <button id="next-page" title="Halaman Selanjutnya">→</button>
+
+        <nav class="page-nav" aria-label="Navigasi halaman surat">
+            <button id="prev-page" type="button" aria-label="Halaman sebelumnya" title="Halaman Sebelumnya">←</button>
+            <span id="page-indicator" aria-live="polite"></span>
+            <button id="next-page" type="button" aria-label="Halaman selanjutnya" title="Halaman Selanjutnya">→</button>
         </nav>
     </main>
-    
-    <div id="music-widget">
-        <img src="/album-art.jpg" alt="Album Art" class="album-art">
+
+    <div id="music-widget" aria-label="Pemutar musik">
+        <img src="/album-art.jpg" alt="Sampul album Merengkuh Mesra" class="album-art">
         <div class="song-info">
             <div class="song-title">Merengkuh Mesra</div>
             <div class="artist-name">Putra Timur</div>
         </div>
-        <button id="play-pause-btn" title="Jeda Musik">
-            <i class="fas fa-pause"></i>
+        <button id="play-pause-btn" type="button" data-playing="true" aria-label="Jeda musik" title="Jeda Musik">
+            <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+            </svg>
         </button>
     </div>
-    
+
     <script type="module" src="./script.js"></script>
 </body>
 </html>

@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Heart, Flame, Wind, RotateCcw, Mail, Send, CheckCircle2, Copy } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import {
+  Sparkles,
+  Heart,
+  Flame,
+  Wind,
+  RotateCcw,
+  Mail,
+  Send,
+  CheckCircle2,
+  Copy,
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sendEmail } from '../lib/email';
 
@@ -8,7 +18,7 @@ interface BirthdayCakeProps {
   onRestart: () => void;
 }
 
-const RECIPIENT_EMAILS = 'adityavahlevy1003@gmail.com,daniachaeyoung@gmail.com';
+const RECIPIENT_EMAILS = 'adityavahlevy1003@gmail.com, daniachaeyoung@gmail.com';
 
 export const BirthdayCake: React.FC<BirthdayCakeProps> = ({ onRestart }) => {
   const [candlesBlown, setCandlesBlown] = useState(false);
@@ -19,23 +29,37 @@ export const BirthdayCake: React.FC<BirthdayCakeProps> = ({ onRestart }) => {
   const [savedWish, setSavedWish] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const reduceMotion = useReducedMotion();
+  const blowTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const confettiTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (blowTimeoutRef.current) clearTimeout(blowTimeoutRef.current);
+      if (confettiTimerRef.current) clearInterval(confettiTimerRef.current);
+    };
+  }, []);
 
   const handleBlowCandles = () => {
     if (candlesBlown) return;
     setIsBlowing(true);
 
-    setTimeout(() => {
+    blowTimeoutRef.current = setTimeout(() => {
       setCandlesBlown(true);
       setIsBlowing(false);
+
+      if (reduceMotion) return;
 
       const duration = 4.5 * 1000;
       const animationEnd = Date.now() + duration;
       const defaults = { startVelocity: 30, spread: 360, ticks: 80, zIndex: 1000 };
 
-      const interval: any = setInterval(() => {
+      confettiTimerRef.current = setInterval(() => {
         const timeLeft = animationEnd - Date.now();
         if (timeLeft <= 0) {
-          return clearInterval(interval);
+          if (confettiTimerRef.current) clearInterval(confettiTimerRef.current);
+          confettiTimerRef.current = null;
+          return;
         }
         const particleCount = 50 * (timeLeft / duration);
 
@@ -62,6 +86,7 @@ export const BirthdayCake: React.FC<BirthdayCakeProps> = ({ onRestart }) => {
       spread: 65,
       origin: { y: 0.8 },
       colors: ['#FFD166', '#F472B6'],
+      disableForReducedMotion: true,
     });
 
     setEmailStatus('sending');
@@ -92,84 +117,84 @@ export const BirthdayCake: React.FC<BirthdayCakeProps> = ({ onRestart }) => {
     }
   };
 
-  const handleCopyWish = () => {
+  const handleCopyWish = async () => {
     if (!savedWish) return;
-    navigator.clipboard.writeText(
-      `✨ Doa & Harapan Ulang Tahun Dania ke-24 (17 Agustus 2026):\n"${savedWish}"\n\nDikirim untuk: ${RECIPIENT_EMAILS}`
-    );
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(
+        `✨ Doa & Harapan Ulang Tahun Dania ke-24 (17 Agustus 2026):\n"${savedWish}"\n\nDikirim untuk: ${RECIPIENT_EMAILS}`
+      );
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
   };
 
   return (
-    <div className="relative w-full min-h-[100dvh] flex flex-col items-center justify-between px-4 sm:px-6 pt-18 sm:pt-22 pb-12 z-10 max-w-4xl mx-auto overflow-y-auto text-center">
+    <div className="scene scene-pad max-w-4xl px-4 text-center sm:px-6">
       {/* Top Badge */}
-      <div className="mb-4">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel-gold border border-amber-400/30 text-amber-300 text-xs font-semibold uppercase tracking-wider mb-2">
-          <Sparkles className="w-4 h-4 text-amber-400 animate-spin-slow" />
-          <span>Grand Celebration Moment</span>
-          <Sparkles className="w-4 h-4 text-amber-400 animate-spin-slow" />
-        </div>
-        <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2">
+      <div className="mx-auto mb-5 max-w-xl">
+        <p className="chip mx-auto">
+          <Sparkles aria-hidden="true" className="h-4 w-4" />
+          Grand Celebration Moment
+        </p>
+        <h2 className="mt-3 font-serif text-2xl font-bold text-heading sm:text-4xl md:text-5xl">
           {candlesBlown ? (
-            <span className="bg-gradient-to-r from-amber-300 via-pink-400 to-rose-400 bg-clip-text text-transparent">
-              ✨ Make a Wish, Dania! ✨
-            </span>
+            <span className="text-gradient-gold">✨ Make a Wish, Dania! ✨</span>
           ) : (
             <span>Kue Ulang Tahun ke-24</span>
           )}
         </h2>
-        <p className="text-slate-300 text-xs sm:text-base font-light max-w-md mx-auto">
+        <p className="lead mt-2">
           {candlesBlown
-            ? 'Lilin telah ditiup! Tuliskan doa & harapan terindahmu di bawah ini.'
+            ? 'Lilin telah ditiup. Tuliskan doa dan harapan terindahmu di bawah ini.'
             : 'Pikirkan sebuah harapan terindah dalam hatimu, lalu tiup lilin angka 24 ini.'}
         </p>
       </div>
 
       {/* 3D-Styled Birthday Cake */}
-      <div className="relative w-64 sm:w-80 h-60 sm:h-72 flex flex-col items-center justify-end my-4 flex-shrink-0">
+      <div className="relative mx-auto my-4 flex h-56 w-64 flex-col items-center justify-end sm:h-64 sm:w-80">
         <div
-          className={`absolute inset-0 rounded-full blur-3xl transition duration-700 -z-10 ${
-            candlesBlown
-              ? 'bg-gradient-to-t from-pink-500/20 to-indigo-500/20'
-              : 'bg-gradient-to-t from-amber-500/30 to-rose-500/30 animate-pulse-slow'
+          aria-hidden="true"
+          className={`absolute inset-0 -z-10 rounded-full blur-3xl transition duration-700 ${
+            candlesBlown ? 'bg-accent2/15' : 'animate-pulse-slow bg-accent/20'
           }`}
         />
 
         {/* Number Candles: 2 and 4 */}
-        <div className="flex items-end justify-center gap-5 sm:gap-6 mb-2 z-20">
+        <div className="z-20 mb-2 flex items-end justify-center gap-5 sm:gap-6">
           {['2', '4'].map((num, idx) => (
             <div key={idx} className="relative flex flex-col items-center">
-              <div className="h-8 sm:h-10 flex items-center justify-center">
+              <div className="flex h-8 items-center justify-center sm:h-10">
                 <AnimatePresence>
                   {!candlesBlown ? (
                     <motion.div
                       key="flame"
-                      initial={{ scale: 0 }}
+                      initial={reduceMotion ? false : { scale: 0 }}
                       animate={{ scale: 1 }}
-                      exit={{ scale: 0, opacity: 0 }}
-                      className="relative flex items-center justify-center cursor-pointer"
+                      exit={reduceMotion ? { opacity: 0 } : { scale: 0, opacity: 0 }}
+                      className="relative flex cursor-pointer items-center justify-center"
                       onClick={handleBlowCandles}
                     >
-                      <div className="w-4 h-7 sm:w-5 sm:h-8 bg-gradient-to-t from-amber-500 via-orange-400 to-yellow-200 rounded-full animate-flicker shadow-lg shadow-amber-500/70" />
-                      <div className="absolute w-1.5 h-3 sm:w-2 sm:h-4 bg-white/90 rounded-full bottom-1" />
+                      <div className="h-7 w-4 animate-flicker rounded-full bg-gradient-to-t from-accent via-accent2 to-accent-soft shadow-lg sm:h-8 sm:w-5" />
+                      <div className="absolute bottom-1 h-3 w-1.5 rounded-full bg-white/90 sm:h-4 sm:w-2" />
                     </motion.div>
                   ) : (
                     <motion.div
                       key="smoke"
-                      initial={{ opacity: 0.9, y: 0, scale: 0.5 }}
+                      initial={reduceMotion ? false : { opacity: 0.9, y: 0, scale: 0.5 }}
                       animate={{ opacity: 0, y: -25, scale: 1.8 }}
                       transition={{ duration: 1.5, ease: 'easeOut' }}
-                      className="text-slate-400"
+                      className="text-muted"
                     >
-                      <Wind className="w-5 h-5 opacity-60" />
+                      <Wind aria-hidden="true" className="h-5 w-5 opacity-60" />
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
-              <div className="w-2 sm:w-2.5 h-5 sm:h-6 bg-gradient-to-b from-amber-200 to-amber-400 rounded-t-sm" />
-              <div className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-gradient-to-b from-amber-300 to-amber-500 text-slate-950 font-serif font-black text-xl sm:text-2xl rounded-lg shadow-lg border border-amber-200 -mt-1">
+              <div className="h-5 w-2 rounded-t-sm bg-gradient-to-b from-accent-soft to-accent sm:h-6 sm:w-2.5" />
+              <div className="-mt-1 rounded-lg border border-accent-soft/60 bg-gradient-to-b from-accent to-accent-strong px-2.5 py-0.5 font-serif text-xl font-black text-on-accent shadow-lg sm:px-3 sm:py-1 sm:text-2xl">
                 {num}
               </div>
             </div>
@@ -177,171 +202,186 @@ export const BirthdayCake: React.FC<BirthdayCakeProps> = ({ onRestart }) => {
         </div>
 
         {/* Tier 1 */}
-        <div className="relative w-40 sm:w-48 h-14 sm:h-16 bg-gradient-to-r from-pink-400 via-rose-300 to-pink-400 rounded-t-3xl border-t-2 border-pink-200 shadow-xl flex items-center justify-center overflow-hidden">
-          <div className="absolute top-0 inset-x-0 h-3 sm:h-4 bg-white/40 rounded-b-xl" />
+        <div className="relative flex h-14 w-40 items-center justify-center overflow-hidden rounded-t-3xl border-t-2 border-accent-soft/70 bg-gradient-to-r from-accent2 via-accent-soft to-accent2 shadow-xl sm:h-16 sm:w-48">
+          <div className="absolute inset-x-0 top-0 h-3 rounded-b-xl bg-white/40 sm:h-4" />
           <div className="flex gap-2">
             {[1, 2, 3, 4].map((s) => (
-              <span key={s} className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-200 animate-ping" />
+              <span key={s} className="h-1.5 w-1.5 animate-ping rounded-full bg-accent-soft sm:h-2 sm:w-2" />
             ))}
           </div>
         </div>
 
         {/* Tier 2 */}
-        <div className="relative w-56 sm:w-64 h-18 sm:h-22 bg-gradient-to-r from-purple-900 via-pink-900 to-indigo-950 rounded-2xl border-2 border-amber-400/30 shadow-2xl flex flex-col items-center justify-center p-2">
-          <div className="absolute -top-1 inset-x-2 h-1.5 sm:h-2 bg-gradient-to-r from-amber-300 to-yellow-500 rounded-full" />
-          <p className="font-serif italic font-bold text-amber-200 text-xs sm:text-sm tracking-wide">
+        <div className="relative flex h-16 w-56 flex-col items-center justify-center rounded-2xl border-2 border-line-strong bg-gradient-to-r from-surface-raised via-surface to-bg p-2 shadow-lg sm:h-20 sm:w-64">
+          <div className="absolute -top-1 inset-x-2 h-1.5 rounded-full bg-gradient-to-r from-accent to-accent-strong sm:h-2" />
+          <p className="font-serif text-xs font-bold italic tracking-wide text-accent sm:text-sm">
             Happy 24th Dania
           </p>
-          <div className="flex items-center gap-1 mt-0.5 sm:mt-1 text-pink-300 text-[9px] sm:text-[10px]">
-            <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-pink-400" />
+          <div className="mt-0.5 flex items-center gap-1 text-2xs text-accent2 sm:mt-1">
+            <Heart aria-hidden="true" className="h-2.5 w-2.5 fill-accent2 sm:h-3 sm:w-3" />
             <span>17 Agustus 2026</span>
-            <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-pink-400" />
+            <Heart aria-hidden="true" className="h-2.5 w-2.5 fill-accent2 sm:h-3 sm:w-3" />
           </div>
         </div>
 
         {/* Cake Stand */}
-        <div className="w-64 sm:w-72 h-3 sm:h-4 bg-gradient-to-r from-slate-400 via-slate-200 to-slate-400 rounded-full shadow-2xl -mt-1" />
+        <div className="-mt-1 h-3 w-64 rounded-full bg-gradient-to-r from-faint via-line-strong to-faint shadow-lg sm:h-4 sm:w-72" />
       </div>
 
       {/* Blow Candle Action Button */}
       {!candlesBlown && (
         <motion.button
-          whileHover={{ scale: 1.06 }}
-          whileTap={{ scale: 0.94 }}
+          type="button"
+          whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+          whileTap={reduceMotion ? undefined : { scale: 0.96 }}
           onClick={handleBlowCandles}
           disabled={isBlowing}
-          className="my-4 px-8 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-amber-400 via-pink-500 to-rose-500 text-slate-950 font-bold text-sm sm:text-lg flex items-center gap-2.5 shadow-2xl shadow-pink-500/40 hover:shadow-pink-500/60 transition cursor-pointer"
+          className="btn btn-primary mx-auto my-4 px-8 py-3.5 text-sm sm:text-base"
         >
-          <Flame className="w-5 h-5 fill-slate-950 text-slate-950" />
-          <span>{isBlowing ? 'Meniup Lilin...' : 'Tiup Lilin Sekarang 🎂'}</span>
+          <Flame aria-hidden="true" className="h-5 w-5 fill-on-accent" />
+          <span>{isBlowing ? 'Meniup Lilin...' : 'Tiup Lilin Sekarang'}</span>
         </motion.button>
       )}
 
-      {/* SPATIOUS & LARGE WISH INPUT CARD */}
+      {/* Wish Input Card */}
       {candlesBlown && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-xl my-4 space-y-4"
+          className="mx-auto my-4 w-full max-w-xl space-y-4"
         >
           {!wishMade ? (
             <form
               onSubmit={handleSaveWishAndEmail}
-              className="glass-panel-gold p-5 sm:p-7 rounded-2xl border border-amber-400/40 text-left space-y-4 shadow-2xl backdrop-blur-2xl"
+              className="panel-gold space-y-4 p-5 text-left sm:p-7"
             >
               <div>
-                <label className="block text-xs font-semibold text-amber-200 uppercase tracking-wider mb-1.5">
-                  Nama Pengirim / Panggilan Sayang:
+                <label htmlFor="sender-name" className="field-label">
+                  Nama Pengirim / Panggilan Sayang
                 </label>
                 <input
+                  id="sender-name"
                   type="text"
                   value={senderName}
                   onChange={(e) => setSenderName(e.target.value)}
-                  className="w-full bg-slate-950/90 border border-white/20 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition"
+                  autoComplete="name"
+                  className="field"
                   placeholder="Contoh: Dania / Aditya"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-amber-200 uppercase tracking-wider mb-1.5">
-                  Tuliskan Doa & Harapan Terindahmu di Umur 24:
+                <label htmlFor="wish-input" className="field-label">
+                  Doa & Harapan Terindahmu di Umur 24
                 </label>
                 <textarea
+                  id="wish-input"
                   value={wishInput}
                   onChange={(e) => setWishInput(e.target.value)}
-                  placeholder="Tuliskan harapanmu seluas-luasnya di sini... (misal: impian, doa kesehatan, kelancaran masa depan, atau pesan manis berdua)"
+                  placeholder="Tuliskan harapanmu seluas-luasnya di sini... (impian, doa kesehatan, kelancaran masa depan, atau pesan manis berdua)"
                   rows={4}
-                  className="w-full bg-slate-950/90 border border-white/20 rounded-xl p-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition leading-relaxed"
+                  maxLength={600}
+                  aria-describedby="wish-counter wish-email-note"
+                  className="field resize-none leading-relaxed"
                   required
                 />
+                <p id="wish-counter" className="mt-1 text-right text-2xs tabular-nums text-faint">
+                  {wishInput.length} / 600
+                </p>
               </div>
 
-              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-400/20 text-xs text-amber-200/90 flex items-start gap-2.5">
-                <Mail className="w-4 h-4 text-amber-300 flex-shrink-0 mt-0.5" />
+              <div
+                id="wish-email-note"
+                className="flex items-start gap-2.5 rounded-xl border border-line bg-accent/5 p-3 text-xs text-muted"
+              >
+                <Mail aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                 <span>
                   Pesan otomatis dipersiapkan untuk dikirim ke email kita:
-                  <strong className="block text-white mt-0.5 font-mono text-[11px]">
+                  <strong className="mt-0.5 block font-mono text-2xs text-heading">
                     adityavahlevy1003@gmail.com & daniachaeyoung@gmail.com
                   </strong>
                 </span>
               </div>
 
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 text-slate-950 font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-xl shadow-pink-500/30 cursor-pointer"
+                whileHover={reduceMotion ? undefined : { scale: 1.01 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.99 }}
+                disabled={!wishInput.trim() || emailStatus === 'sending'}
+                className="btn btn-primary w-full"
               >
-                <Send className="w-4 h-4" />
-                <span>Simpan Harapan & Kirim ke Email 💌</span>
+                <Send aria-hidden="true" className="h-4 w-4" />
+                <span>
+                  {emailStatus === 'sending' ? 'Mengirim...' : 'Simpan Harapan & Kirim ke Email'}
+                </span>
               </motion.button>
             </form>
           ) : (
-            <div className="glass-panel-gold p-6 sm:p-8 rounded-2xl border border-amber-400/40 text-center space-y-4 shadow-2xl">
-              <div className="inline-flex p-3 rounded-full bg-pink-500/20 text-pink-300 mb-1">
-                <CheckCircle2 className="w-8 h-8 text-green-400" />
+            <div className="panel-gold space-y-4 p-6 text-center sm:p-8">
+              <div className="inline-flex rounded-full bg-success/15 p-3 text-success">
+                <CheckCircle2 aria-hidden="true" className="h-8 w-8" />
               </div>
-              <h4 className="font-serif text-lg sm:text-xl font-bold text-amber-200">
-                Harapan & Doa Dania Telah Tersimpan!
+              <h4 className="font-serif text-lg font-bold text-accent sm:text-xl">
+                Harapan & Doa Dania Telah Tersimpan
               </h4>
-              <p className="text-white text-sm sm:text-base italic bg-slate-950/70 p-4 rounded-xl border border-white/10 text-left whitespace-pre-line leading-relaxed">
-                "{savedWish}"
-              </p>
-              
-              <p className="text-xs text-slate-300">
-                Terkirim untuk kenangan kita: <br />
-                <span className="text-amber-300 font-mono text-xs">
-                  adityavahlevy1003@gmail.com & daniachaeyoung@gmail.com
-                </span>
+              <p className="whitespace-pre-line rounded-xl border border-line bg-bg/70 p-4 text-left text-sm italic leading-relaxed text-ink">
+                “{savedWish}”
               </p>
 
-              <div className="flex flex-wrap justify-center gap-3 pt-2">
+              <p className="text-xs text-muted">
+                Terkirim untuk kenangan kita:
+                <br />
+                <span className="font-mono text-2xs text-accent">{RECIPIENT_EMAILS}</span>
+              </p>
+
+              <div className="flex flex-wrap justify-center gap-3 pt-1">
                 <button
                   type="button"
                   onClick={handleCopyWish}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-semibold transition cursor-pointer"
+                  className="btn btn-secondary btn-sm"
                 >
-                  <Copy className="w-4 h-4" />
+                  <Copy aria-hidden="true" className="h-4 w-4" />
                   <span>{copied ? 'Tersalin!' : 'Salin Pesan'}</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleResendEmail}
                   disabled={emailStatus === 'sending'}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-amber-400 text-slate-950 text-xs sm:text-sm font-bold transition cursor-pointer shadow disabled:opacity-50"
+                  className="btn btn-primary btn-sm"
                 >
-                  <Mail className="w-4 h-4" />
+                  <Mail aria-hidden="true" className="h-4 w-4" />
                   <span>{emailStatus === 'sending' ? 'Mengirim...' : 'Kirim Ulang ke Email'}</span>
                 </button>
               </div>
 
-              {emailStatus !== 'idle' && (
-                <p
-                  className={`text-xs font-semibold ${
-                    emailStatus === 'sent'
-                      ? 'text-green-400'
-                      : emailStatus === 'error'
-                        ? 'text-rose-400'
-                        : 'text-amber-300'
-                  }`}
-                >
-                  {emailStatus === 'sending'
+              <p
+                role="status"
+                className={`text-xs font-semibold ${
+                  emailStatus === 'sent'
+                    ? 'text-success'
+                    : emailStatus === 'error'
+                      ? 'text-danger'
+                      : 'text-accent'
+                }`}
+              >
+                {emailStatus === 'idle'
+                  ? ''
+                  : emailStatus === 'sending'
                     ? 'Mengirim email...'
                     : emailStatus === 'sent'
-                      ? '✓ Email terkirim ke aditya & dania'
-                      : '✗ Email gagal terkirim — cek koneksi lalu kirim ulang'}
-                </p>
-              )}
+                      ? 'Email terkirim ke Aditya dan Dania.'
+                      : 'Email gagal terkirim. Cek koneksi lalu kirim ulang.'}
+              </p>
             </div>
           )}
 
           {/* Grand Blessing Banner */}
-          <div className="p-5 rounded-2xl glass-card border border-white/15 text-center">
-            <h3 className="font-serif text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-200 via-pink-300 to-amber-200 bg-clip-text text-transparent mb-1.5">
+          <div className="panel p-5 text-center">
+            <h3 className="mb-1.5 font-serif text-xl font-bold text-gradient-gold sm:text-2xl">
               Selamat Ulang Tahun, Dania! 💐
             </h3>
-            <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed">
+            <p className="text-xs font-light leading-relaxed text-muted sm:text-sm">
               Terima kasih sudah lahir dan tumbuh menjadi bidadari paling istimewa. Hari ini dan
               seterusnya, kamu layak mendapatkan semua kebahagiaan di dunia ini.
             </p>
@@ -350,15 +390,11 @@ export const BirthdayCake: React.FC<BirthdayCakeProps> = ({ onRestart }) => {
       )}
 
       {/* Footer Restart Journey Action */}
-      <div className="mt-4 flex items-center justify-between w-full max-w-xl border-t border-white/10 pt-3">
-        <span className="text-[11px] text-slate-400">17 Agustus 2026 • Dania 24th</span>
-        <button
-          type="button"
-          onClick={onRestart}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white text-xs font-semibold transition cursor-pointer"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Ulangi Perjalanan dari Awal</span>
+      <div className="mx-auto mt-4 flex w-full max-w-xl flex-wrap items-center justify-between gap-3 border-t border-line pt-3">
+        <span className="text-2xs text-faint">17 Agustus 2026 · Dania 24th</span>
+        <button type="button" onClick={onRestart} className="btn btn-ghost btn-sm">
+          <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
+          <span>Ulangi Perjalanan</span>
         </button>
       </div>
     </div>

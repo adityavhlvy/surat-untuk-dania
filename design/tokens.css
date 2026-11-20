@@ -1,29 +1,37 @@
 /*
-  Satu sumber kebenaran untuk dua tema.
-  - paper    : surat (kertas krem, serif)
-  - midnight : kado ulang tahun (malam berbintang, sans)
+  Design tokens: satu sumber kebenaran untuk tiga halaman.
+
+  Tema
+  - paper    : portal dan surat (kertas krem, serif)
+  - midnight : kado ulang tahun (malam hangat, aksen champagne)
 
   Nama token sama di kedua tema. Yang berubah hanya nilainya.
+  Warna disimpan sebagai triplet kanal agar Tailwind bisa memakai opacity
+  modifier (misal bg-surface/70) tanpa kehilangan nilai token.
+
   Dipakai oleh: index.html (portal), surat/style.css, src/index.css.
 */
 
 :root {
     /* Tipografi */
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-prose: 'Lora', Georgia, serif;
-    --font-ui: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+    --font-display: 'Playfair Display', 'Lora', Georgia, serif;
+    --font-prose: 'Lora', Georgia, 'Times New Roman', serif;
+    --font-ui: 'Plus Jakarta Sans', Inter, system-ui, -apple-system, sans-serif;
     --font-hand: 'Caveat', 'Dancing Script', cursive;
 
-    /* Skala teks */
-    --text-xs: 0.78rem;
-    --text-sm: 0.9rem;
+    /* Skala teks (fluid di dua tangga teratas) */
+    --text-2xs: 0.6875rem;
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
     --text-base: 1rem;
-    --text-lg: 1.15rem;
-    --text-xl: clamp(1.35rem, 1.2rem + 0.6vw, 1.75rem);
-    --text-2xl: clamp(1.8rem, 1.5rem + 1.2vw, 2.5rem);
-    --text-3xl: clamp(2.2rem, 1.7rem + 2.4vw, 3.5rem);
+    --text-lg: 1.125rem;
+    --text-xl: clamp(1.25rem, 1.16rem + 0.4vw, 1.5rem);
+    --text-2xl: clamp(1.55rem, 1.3rem + 1.2vw, 2.15rem);
+    --text-3xl: clamp(1.9rem, 1.45rem + 2.2vw, 2.9rem);
+    --text-4xl: clamp(2.3rem, 1.6rem + 3.4vw, 3.75rem);
 
     /* Ruang (basis 4px) */
+    --space-0: 0;
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -32,73 +40,150 @@
     --space-6: 2rem;
     --space-7: 3rem;
     --space-8: 4rem;
+    --space-9: 6rem;
 
     /* Bentuk */
+    --radius-xs: 4px;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 16px;
+    --radius-xl: 24px;
     --radius-pill: 999px;
 
     /* Gerak */
-    --dur-fast: 150ms;
-    --dur: 250ms;
-    --dur-slow: 600ms;
+    --dur-fast: 140ms;
+    --dur: 220ms;
+    --dur-slow: 480ms;
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
-    --lift: -3px;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --lift: -2px;
 
-    /* Peran warna, nilai bawaan = tema midnight */
-    --bg: #050714;
-    --surface: #0b0f24;
-    --text: #e2e8f0;
-    --heading: #ffffff;
-    --muted: #94a3b8;
-    --accent: #ffd166;
-    --accent-soft: #ffe3a8;
-    --line: rgba(255, 209, 102, 0.25);
+    /* Lapisan */
+    --z-base: 0;
+    --z-content: 10;
+    --z-nav: 50;
+    --z-overlay: 80;
+    --z-toast: 90;
 
-    /* Palet khusus kado (dipakai Tailwind lewat tailwind.config.js) */
-    --midnight-950: #050714;
-    --midnight-900: #0b0f24;
-    --midnight-800: #141c42;
-    --midnight-700: #1f2b66;
-
-    --starlight-gold: #ffd166;
-    --starlight-rose: #f472b6;
-    --starlight-amber: #f59e0b;
-    --starlight-glow: #ffe3a8;
+    /* Tinggi navigasi atas */
+    --nav-h: 56px;
 }
 
-[data-theme='paper'] {
-    --bg: #fcfaf5;
-    --surface: #fffdfa;
-    --text: #5c554a;
-    --heading: #3d352a;
-    --muted: #8a8073;
-    --accent: #a88b60;
-    --accent-soft: #c8ae83;
-    --line: rgba(168, 139, 96, 0.35);
+/* Tema paper: krem hangat, tinta cokelat */
+html[data-theme='paper'] {
+    --bg-rgb: 251 248 242;
+    --surface-rgb: 255 253 249;
+    --surface-raised-rgb: 255 255 255;
+    --surface-overlay-rgb: 255 253 249;
+    --text-rgb: 76 70 60;
+    --heading-rgb: 47 42 34;
+    --muted-rgb: 111 103 90;
+    --faint-rgb: 140 132 118;
+    --accent-rgb: 139 107 55;
+    --accent-strong-rgb: 111 84 40;
+    --accent-soft-rgb: 200 174 131;
+    --accent2-rgb: 168 101 124;
+    --on-accent-rgb: 255 253 249;
+    --line-rgb: 139 107 55;
+    --success-rgb: 47 125 90;
+    --danger-rgb: 173 58 74;
+
+    --shadow-sm: 0 1px 2px rgb(47 42 34 / 0.06);
+    --shadow-md: 0 10px 30px -18px rgb(47 42 34 / 0.35);
+    --shadow-lg: 0 30px 70px -40px rgb(47 42 34 / 0.45);
+    --shadow-glow: 0 14px 34px -18px rgb(var(--accent-rgb) / 0.55);
+
+    color-scheme: light;
 }
 
-[data-theme='midnight'] {
-    --bg: #050714;
-    --surface: #0b0f24;
-    --text: #e2e8f0;
-    --heading: #ffffff;
-    --muted: #94a3b8;
-    --accent: #ffd166;
-    --accent-soft: #ffe3a8;
-    --line: rgba(255, 209, 102, 0.25);
+/* Nilai bawaan = midnight, supaya halaman tanpa data-theme tetap terbaca */
+:root,
+html[data-theme='midnight'] {
+    --bg-rgb: 8 10 19;
+    --surface-rgb: 15 18 32;
+    --surface-raised-rgb: 22 26 45;
+    --surface-overlay-rgb: 13 16 29;
+    --text-rgb: 222 226 238;
+    --heading-rgb: 247 244 236;
+    --muted-rgb: 154 163 184;
+    --faint-rgb: 116 124 146;
+    --accent-rgb: 232 196 124;
+    --accent-strong-rgb: 246 216 158;
+    --accent-soft-rgb: 255 236 199;
+    --accent2-rgb: 226 159 180;
+    --on-accent-rgb: 23 18 9;
+    --line-rgb: 232 196 124;
+    --success-rgb: 110 220 165;
+    --danger-rgb: 248 133 152;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+    --shadow-md: 0 12px 34px -20px rgb(0 0 0 / 0.75);
+    --shadow-lg: 0 40px 90px -50px rgb(0 0 0 / 0.9);
+    --shadow-glow: 0 16px 44px -22px rgb(var(--accent-rgb) / 0.5);
+
+    color-scheme: dark;
 }
 
-/* Dasar bersama: fokus dan seleksi selalu memakai aksen tema aktif */
+/* Nilai turunan: jangan ditimpa per tema */
+:root {
+    --bg: rgb(var(--bg-rgb));
+    --surface: rgb(var(--surface-rgb));
+    --surface-raised: rgb(var(--surface-raised-rgb));
+    --surface-overlay: rgb(var(--surface-overlay-rgb) / 0.92);
+    --text: rgb(var(--text-rgb));
+    --heading: rgb(var(--heading-rgb));
+    --muted: rgb(var(--muted-rgb));
+    --faint: rgb(var(--faint-rgb));
+    --accent: rgb(var(--accent-rgb));
+    --accent-strong: rgb(var(--accent-strong-rgb));
+    --accent-soft: rgb(var(--accent-soft-rgb));
+    --accent2: rgb(var(--accent2-rgb));
+    --on-accent: rgb(var(--on-accent-rgb));
+    --line: rgb(var(--line-rgb) / 0.16);
+    --line-strong: rgb(var(--line-rgb) / 0.32);
+    --success: rgb(var(--success-rgb));
+    --danger: rgb(var(--danger-rgb));
+}
+
+@media (min-width: 640px) {
+    :root {
+        --nav-h: 64px;
+    }
+}
+
+/* Dasar bersama: fokus, seleksi, scrollbar */
 :focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
 }
 
 ::selection {
-    background: var(--accent);
-    color: var(--bg);
+    background: rgb(var(--accent-rgb) / 0.34);
+    color: var(--heading);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--accent-rgb) / 0.4) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(var(--accent-rgb) / 0.34);
+    border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--accent-rgb) / 0.6);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -106,5 +191,15 @@
         --dur-fast: 1ms;
         --dur: 1ms;
         --dur-slow: 1ms;
+        --lift: 0px;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

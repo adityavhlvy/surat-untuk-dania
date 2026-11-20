@@ -46,10 +46,16 @@ Satu file token, dua tema. Nama token sama, nilainya berbeda:
 - `data-theme="paper"` untuk halaman pembuka dan surat
 - `data-theme="midnight"` untuk halaman kado
 
-Token warna memakai nama peran: `--bg`, `--surface`, `--text`, `--heading`,
-`--muted`, `--accent`, `--accent-soft`, `--line`. Tipografi: `--font-display`,
-`--font-prose`, `--font-ui`, `--font-hand`. Plus skala teks, skala ruang 4px,
-radius, dan gerak (`--dur`, `--ease`).
+Warna disimpan sebagai triplet kanal (`--bg-rgb`, `--accent-rgb`, dst.) lalu
+diekspos sebagai warna jadi (`--bg`, `--accent`). Pola ini membuat Tailwind
+bisa memakai opacity modifier tanpa kehilangan nilai token.
+
+Peran warna: `--bg`, `--surface`, `--surface-raised`, `--text`, `--heading`,
+`--muted`, `--faint`, `--accent`, `--accent-strong`, `--accent-soft`,
+`--accent2`, `--on-accent`, `--line`, `--line-strong`, `--success`, `--danger`.
+Tipografi: `--font-display`, `--font-prose`, `--font-ui`, `--font-hand`.
+Plus skala teks fluid, skala ruang 4px, radius, shadow, lapisan, dan gerak
+(`--dur`, `--ease`, `--ease-out`).
 
 Cara pakai:
 
@@ -59,9 +65,19 @@ Cara pakai:
 - Portal: `<link rel="stylesheet" href="design/tokens.css">`.
 
 Ganti satu nilai di `design/tokens.css`, ketiga halaman ikut berubah.
-Komponen React lama masih memakai utilitas Tailwind bawaan (slate, pink,
-amber). Komponen baru sebaiknya memakai kelas semantik: `bg-bg`, `text-ink`,
-`text-heading`, `text-muted`, `border-line`, `bg-accent`.
+
+Utilitas semantik untuk komponen: `bg-bg`, `bg-surface`, `text-ink`,
+`text-heading`, `text-muted`, `text-faint`, `border-line`, `bg-accent`,
+`text-on-accent`, `shadow-glow`.
+
+Kelas komponen bersama ada di `src/index.css`: `.scene` dan `.scene-pad`
+(kerangka bab), `.panel`, `.panel-gold`, `.panel-glass`, `.btn`,
+`.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.icon-btn`, `.chip`,
+`.segment`, `.field`, `.scene-header`, `.scene-title`.
+
+Semua halaman memuat keluarga font yang sama lewat Google Fonts (Lora,
+Playfair Display, Plus Jakarta Sans, Caveat). Gerak dimatikan otomatis lewat
+`prefers-reduced-motion`.
 
 Aset di `public/` diakses lewat path absolut (misal `/music.mp3`), jadi bisa dipakai dari halaman mana pun.
 

@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Film, Play, Pause, Volume2, VolumeX, ChevronRight, Maximize, Sparkles } from 'lucide-react';
 
 interface VideoCapsuleProps {
@@ -16,12 +16,15 @@ export const VideoCapsule: React.FC<VideoCapsuleProps> = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     return () => {
       onVideoPause();
     };
-  }, [onVideoPause]);
+    // Hanya saat unmount: jangan hentikan BGM tiap render ulang App.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -30,9 +33,16 @@ export const VideoCapsule: React.FC<VideoCapsuleProps> = ({
       setIsPlaying(false);
       onVideoPause();
     } else {
-      videoRef.current.play();
-      setIsPlaying(true);
-      onVideoPlay();
+      videoRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+          onVideoPlay();
+        })
+        .catch(() => {
+          setIsPlaying(false);
+          onVideoPause();
+        });
     }
   };
 
@@ -67,106 +77,114 @@ export const VideoCapsule: React.FC<VideoCapsuleProps> = ({
   };
 
   return (
-    <div className="relative w-full h-[100dvh] max-h-[100dvh] flex flex-col justify-between items-center px-3 sm:px-6 py-2 sm:py-4 z-10 max-w-4xl mx-auto box-border overflow-hidden">
+    <div className="scene scene-pad max-w-4xl px-4 sm:px-6">
       {/* Top Header */}
-      <div className="w-full flex items-center justify-between pt-14 sm:pt-18 pb-1 border-b border-white/10 flex-shrink-0">
-        <div className="flex items-center gap-1.5">
-          <Film className="w-4 h-4 text-amber-400" />
-          <h2 className="font-serif text-sm sm:text-base font-bold text-white leading-none">
-            Secret Memory Cinema
-          </h2>
-        </div>
+      <div className="scene-header">
+        <h2 className="scene-title">
+          <Film aria-hidden="true" className="h-4 w-4 text-accent" />
+          Secret Memory Cinema
+        </h2>
 
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30 text-[10px] font-semibold">
-          <Sparkles className="w-3 h-3 text-amber-300" />
-          <span>Special Video Reel</span>
+        <span className="chip">
+          <Sparkles aria-hidden="true" className="h-3 w-3" />
+          Special Video Reel
         </span>
       </div>
 
-      {/* Main Video Box (Dedicated 9:16 vertical smartphone frame) */}
-      <div className="w-full flex-1 flex flex-col items-center justify-center my-auto overflow-hidden py-1">
+      {/* Main Video Box (dedicated 9:16 vertical frame) */}
+      <div className="flex flex-1 flex-col items-center justify-center overflow-hidden py-2">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="relative w-full max-w-[260px] sm:max-w-[280px] h-[64vh] sm:h-[68vh] bg-slate-950 border border-pink-500/30 rounded-3xl overflow-hidden shadow-2xl p-2 sm:p-2.5 group flex flex-col items-center"
+          className="panel relative flex h-[min(66vh,600px)] w-full max-w-[300px] flex-col items-center overflow-hidden rounded-[1.75rem] p-2.5 shadow-lg"
         >
-          {/* Top Notch / Reel Bar */}
-          <div className="w-full flex justify-between items-center px-2 py-0.5 border-b border-white/10 mb-1 text-[8px] font-mono text-slate-400">
-            <span className="text-red-400 animate-pulse">● REC SPECIAL</span>
-            <span className="text-amber-300">DANIA 24TH REEL</span>
+          {/* Reel bar */}
+          <div className="mb-1 flex w-full items-center justify-between border-b border-line px-2 py-1 font-mono text-2xs text-faint">
+            <span className="text-danger">● REC SPECIAL</span>
+            <span className="text-accent">DANIA 24TH REEL</span>
           </div>
 
           {/* Video Player */}
           <div
-            className="relative flex-1 w-full rounded-2xl overflow-hidden bg-black flex items-center justify-center cursor-pointer"
+            className="group relative flex w-full flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-black"
             onClick={togglePlay}
           >
             <video
               ref={videoRef}
               src="/special-video.mp4"
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
               playsInline
               loop
+              preload="metadata"
+              aria-label="Video kenangan spesial untuk Dania"
               onPlay={handleVideoPlay}
               onPause={handleVideoPause}
               onEnded={handleVideoEnded}
             />
 
             {!isPlaying && (
-              <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center">
-                <motion.div
-                  whileHover={{ scale: 1.15 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="w-12 h-12 rounded-full bg-gradient-to-tr from-pink-500 to-amber-400 flex items-center justify-center text-slate-950 shadow-2xl shadow-pink-500/50"
+              <div className="absolute inset-0 flex items-center justify-center bg-black/45 backdrop-blur-[2px]">
+                <motion.span
+                  whileHover={reduceMotion ? undefined : { scale: 1.1 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.92 }}
+                  className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-on-accent shadow-glow"
                 >
-                  <Play className="w-5 h-5 fill-slate-950 ml-0.5" />
-                </motion.div>
+                  <Play aria-hidden="true" className="ml-0.5 h-5 w-5 fill-on-accent" />
+                </motion.span>
               </div>
             )}
 
-            {/* Hover Floating Controls */}
-            <div className="absolute bottom-2 inset-x-2 px-3 py-1.5 rounded-xl bg-slate-900/85 backdrop-blur border border-white/15 flex items-center justify-between text-white opacity-0 group-hover:opacity-100 transition duration-300">
-              <div className="flex items-center gap-2.5">
+            {/* Floating Controls */}
+            <div className="absolute inset-x-2 bottom-2 flex items-center justify-between rounded-xl border border-line-strong bg-bg/85 px-3 py-1.5 text-heading backdrop-blur transition duration-300 group-hover:opacity-100 sm:opacity-0">
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     togglePlay();
                   }}
-                  className="hover:text-amber-300 transition"
+                  aria-label={isPlaying ? 'Jeda video' : 'Putar video'}
+                  className="transition hover:text-accent"
                 >
-                  {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                  {isPlaying ? (
+                    <Pause aria-hidden="true" className="h-3.5 w-3.5" />
+                  ) : (
+                    <Play aria-hidden="true" className="h-3.5 w-3.5" />
+                  )}
                 </button>
                 <button
                   type="button"
                   onClick={toggleMute}
-                  className="hover:text-amber-300 transition"
+                  aria-label={isMuted ? 'Nyalakan suara' : 'Bisukan suara'}
+                  aria-pressed={isMuted}
+                  className="transition hover:text-accent"
                 >
                   {isMuted ? (
-                    <VolumeX className="w-3.5 h-3.5 text-red-400" />
+                    <VolumeX aria-hidden="true" className="h-3.5 w-3.5 text-danger" />
                   ) : (
-                    <Volume2 className="w-3.5 h-3.5 text-amber-300" />
+                    <Volume2 aria-hidden="true" className="h-3.5 w-3.5 text-accent" />
                   )}
                 </button>
               </div>
               <button
                 type="button"
                 onClick={toggleFullscreen}
-                className="hover:text-amber-300 transition"
+                aria-label="Layar penuh"
+                className="transition hover:text-accent"
               >
-                <Maximize className="w-3.5 h-3.5" />
+                <Maximize aria-hidden="true" className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
 
-          <p className="text-[9px] sm:text-[10px] text-slate-400 text-center italic mt-1 truncate max-w-full">
-            "Setiap detik tawa dan senyumanmu adalah keindahan terindah."
+          <p className="mt-1.5 line-clamp-2 max-w-full text-balance text-center text-2xs italic leading-snug text-muted">
+            “Setiap detik tawa dan senyumanmu adalah keindahan terindah.”
           </p>
         </motion.div>
       </div>
 
       {/* Bottom Button */}
-      <div className="w-full flex items-center justify-end pt-1 border-t border-white/10 flex-shrink-0">
+      <div className="mt-3 flex w-full items-center justify-end border-t border-line pt-3">
         <button
           type="button"
           onClick={() => {
@@ -174,10 +192,10 @@ export const VideoCapsule: React.FC<VideoCapsuleProps> = ({
             onVideoPause();
             onNext();
           }}
-          className="px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500 to-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1 cursor-pointer shadow"
+          className="btn btn-primary btn-sm"
         >
-          <span>Buka Surat Cinta 💌</span>
-          <ChevronRight className="w-3.5 h-3.5" />
+          <span>Buka Surat Cinta</span>
+          <ChevronRight aria-hidden="true" className="h-3.5 w-3.5" />
         </button>
       </div>
     </div>
