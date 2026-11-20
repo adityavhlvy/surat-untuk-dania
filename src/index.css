@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased overflow-x-hidden;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom glow effects */
+.glow-gold {
+  box-shadow: 0 0 35px -5px rgba(255, 209, 102, 0.4);
+}
+
+.glow-rose {
+  box-shadow: 0 0 35px -5px rgba(244, 114, 182, 0.4);
+}
+
+.glow-blue {
+  box-shadow: 0 0 45px -5px rgba(59, 130, 246, 0.3);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 20px rgba(255, 209, 102, 0.6), 0 0 40px rgba(255, 209, 102, 0.3);
+}
+
+.text-glow-rose {
+  text-shadow: 0 0 20px rgba(244, 114, 182, 0.6), 0 0 40px rgba(244, 114, 182, 0.3);
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-gold {
+  background: rgba(26, 20, 10, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 209, 102, 0.2);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050714;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(244, 114, 182, 0.3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(244, 114, 182, 0.6);
+}
+
+/* Candle flame animation */
+@keyframes flicker {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.9));
+  }
+  25% {
+    transform: scale(1.08, 0.95) rotate(2deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 16px rgba(245, 158, 11, 1));
+  }
+  50% {
+    transform: scale(0.95, 1.05) rotate(-2deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 10px rgba(251, 146, 60, 0.8));
+  }
+  75% {
+    transform: scale(1.04, 0.98) rotate(1deg);
+    opacity: 0.98;
+    filter: drop-shadow(0 0 14px rgba(251, 191, 36, 0.95));
+  }
+}
+
+.animate-flicker {
+  animation: flicker 1.8s infinite ease-in-out;
+  transform-origin: bottom center;
+}
+
+/* Polaroids shadow */
+.polaroid-shadow {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 25px 0 rgba(244, 114, 182, 0.15);
+}
